@@ -1,0 +1,96 @@
+### Arquivo de requisições para testar a API direto do VS Code (extensão "REST Client")
+### ou do Visual Studio / Rider. Clique em "Send Request" acima de cada bloco.
+
+@api = http://localhost:5000
+
+### 1) Health check (público)
+GET {{api}}/health
+
+### 2) Login (copie o "token" da resposta e cole na variável abaixo)
+# @name login
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@servicehub.local",
+  "senha": "Admin@123"
+}
+
+### Pega o token automaticamente da resposta do login acima
+@token = {{login.response.body.token}}
+
+### 3) Listar clientes (EF Core)
+GET {{api}}/api/clientes
+Authorization: Bearer {{token}}
+
+### 4) Buscar clientes por texto
+GET {{api}}/api/clientes?busca=saude
+Authorization: Bearer {{token}}
+
+### 5) Criar cliente
+POST {{api}}/api/clientes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "Mercado Bom Preço",
+  "documento": "11.222.333/0001-44",
+  "email": "ti@bompreco.com.br",
+  "telefone": "(11) 4000-1000",
+  "setor": "Varejo"
+}
+
+### 6) Validação automática (deve devolver 400 com os erros de cada campo)
+POST {{api}}/api/clientes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "",
+  "documento": "123",
+  "email": "email-invalido",
+  "setor": ""
+}
+
+### 7) Projetos de um cliente (EF Core + Include)
+GET {{api}}/api/projetos?clienteId=1
+Authorization: Bearer {{token}}
+
+### 8) Listar chamados com filtros (Dapper)
+GET {{api}}/api/chamados?status=Aberto&prioridade=Alta
+Authorization: Bearer {{token}}
+
+### 9) Criar chamado
+POST {{api}}/api/chamados
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Erro ao emitir nota fiscal",
+  "descricao": "Ao finalizar o pedido o sistema retorna erro 500 na integração com a SEFAZ.",
+  "clienteId": 1,
+  "projetoId": 1,
+  "responsavelId": 2,
+  "prioridade": "Critica"
+}
+
+### 10) Alterar status do chamado 1
+PATCH {{api}}/api/chamados/1/status
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "EmAndamento",
+  "comentario": "Analisando logs da integração"
+}
+
+### 11) Histórico (auditoria via ADO.NET)
+GET {{api}}/api/chamados/1/historico
+Authorization: Bearer {{token}}
+
+### 12) Dashboard (Dapper + stored procedure)
+GET {{api}}/api/dashboard
+Authorization: Bearer {{token}}
+
+### 13) Sem token => 401
+GET {{api}}/api/clientes

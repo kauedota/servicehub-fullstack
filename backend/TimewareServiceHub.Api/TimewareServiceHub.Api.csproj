@@ -1,0 +1,41 @@
+<!--
+  .csproj = equivalente ao pom.xml (Maven) / build.gradle.
+  - Sdk="Microsoft.NET.Sdk.Web" ~ spring-boot-starter-web (traz Kestrel, MVC, DI, logging, config).
+  - PackageReference ~ <dependency>. Os pacotes vêm do NuGet (equivalente ao Maven Central).
+-->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TimewareServiceHub.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Hash de senha (equivalente ao BCryptPasswordEncoder do Spring Security) -->
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <!-- Micro-ORM: SQL escrito à mão, mapeamento automático para objetos -->
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <!-- Validação de JWT no pipeline (equivalente ao spring-boot-starter-oauth2-resource-server) -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
+    <!-- Driver do SQL Server (base do ADO.NET, usado também por Dapper e EF Core) -->
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+    <!-- ORM completo (equivalente ao JPA/Hibernate) -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <!-- Health check que testa a conexão com o banco (equivalente ao Spring Actuator /health) -->
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0.8" />
+    <!-- Swagger / OpenAPI (equivalente ao springdoc-openapi) -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <!-- Copia os scripts SQL da pasta /database para a saída do build (pasta Database/) -->
+  <ItemGroup>
+    <None Include="..\..\database\*.sql" LinkBase="Database" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

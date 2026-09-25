@@ -1,0 +1,75 @@
+# =====================================================================
+# Manifesto Kubernetes de referência para a API (não é necessário para rodar localmente).
+# Aplicar: kubectl apply -f k8s/api.yaml
+#
+# Deployment -> "quero 3 cópias (pods) desta imagem rodando; se uma cair, recrie"
+# Service    -> endereço estável + balanceamento entre os pods
+# Secret     -> senha/connection string fora da imagem e fora do Git (em produção: Key Vault / Secrets Manager)
+# Probes     -> o Kubernetes usa o /health da API para saber se o pod está vivo e pronto
+# =====================================================================
+apiVersion: v1
+kind: Secret
+metadata:
+  name: servicehub-api-secrets
+type: Opaque
+stringData:
+  ConnectionStrings__DefaultConnection: "Server=sql-servicehub.database.windows.net;Database=TimewareServiceHub;User Id=app;Password=TROCAR;Encrypt=True"
+  Jwt__Chave: "TROCAR-por-uma-chave-segura-com-mais-de-32-caracteres"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servicehub-api
+  labels:
+    app: servicehub-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: servicehub-api
+  strategy:
+    type: RollingUpdate            # troca os pods aos poucos: deploy sem downtime
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: servicehub-api
+    spec:
+      containers:
+        - name: api
+          image: meuregistry.azurecr.io/servicehub-api:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: Database__InicializarAoSubir
+              value: "false"        # em produção o schema é aplicado pelo pipeline, não pela API
+          envFrom:
+            - secretRef:
+                name: servicehub-api-secrets
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }
+            limits:   { cpu: "500m", memory: "512Mi" }
+          readinessProbe:           # "pode receber tráfego?"
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:            # "está vivo? se não, reinicia o container"
+            httpGet: { path: /health, port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicehub-api
+spec:
+  selector:
+    app: servicehub-api
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: ClusterIP                   # exposto para fora via Ingress / Load Balancer

@@ -1,0 +1,18 @@
+# .NET
+bin/
+obj/
+.vs/
+*.user
+TestResults/
+
+# Node / frontend
+node_modules/
+dist/
+
+# Ambiente
+.env
+
+# Material pessoal (não versionado)
+docs/
+database/03-queries-estudo.sql
+database/04-ddl-alter-drop-exemplos.sql

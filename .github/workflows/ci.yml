@@ -1,0 +1,52 @@
+# Pipeline de CI (GitHub Actions). Roda a cada push/pull request na main.
+# Etapas: restaurar -> compilar -> testar (backend) | instalar -> compilar (frontend) | build das imagens Docker.
+# Se qualquer etapa falhar, o PR fica "vermelho" e não deve ser mergeado.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore backend/TimewareServiceHub.sln
+      - name: Build
+        run: dotnet build backend/TimewareServiceHub.sln -c Release --no-restore
+      - name: Testes unitários
+        run: dotnet test backend/TimewareServiceHub.sln -c Release --no-build --logger trx
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build   # tsc (checagem de tipos) + vite build
+
+  docker:
+    needs: [backend, frontend]      # só roda se os dois jobs anteriores passarem
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build imagem da API
+        run: docker build -f backend/TimewareServiceHub.Api/Dockerfile -t servicehub-api:${{ github.sha }} .
+      - name: Build imagem do frontend
+        run: docker build -t servicehub-frontend:${{ github.sha }} frontend
+      # Próximo passo (CD), em um projeto real:
+      #  - docker login no registry (ACR na Azure / ECR na AWS)
+      #  - docker push das imagens com a tag do commit
+      #  - deploy: kubectl apply / helm upgrade (AKS/EKS) ou atualizar App Service / ECS

@@ -1,0 +1,60 @@
+# Mesmo pipeline, no formato Azure DevOps Pipelines (muito comum em empresas que usam .NET + Azure).
+# Stages: Build (CI) -> Deploy (CD). O Deploy só roda na main e depois do Build passar.
+trigger:
+  branches:
+    include: [main]
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  tag: $(Build.BuildId)
+  # Criadas no Azure DevOps (Service Connections), não ficam no código:
+  acrConnection: 'acr-service-connection'
+  imageRepository: 'servicehub-api'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BackendFrontend
+        steps:
+          - task: UseDotNet@2
+            inputs:
+              version: '8.0.x'
+          - script: dotnet restore backend/TimewareServiceHub.sln
+            displayName: Restore
+          - script: dotnet build backend/TimewareServiceHub.sln -c Release --no-restore
+            displayName: Build
+          - script: dotnet test backend/TimewareServiceHub.sln -c Release --no-build
+            displayName: Testes
+          - script: |
+              cd frontend
+              npm install
+              npm run build
+            displayName: Build do frontend
+
+      - job: Imagem
+        dependsOn: BackendFrontend
+        steps:
+          - task: Docker@2
+            displayName: Build e push da imagem da API para o Azure Container Registry
+            inputs:
+              command: buildAndPush
+              containerRegistry: $(acrConnection)
+              repository: $(imageRepository)
+              dockerfile: backend/TimewareServiceHub.Api/Dockerfile
+              buildContext: .
+              tags: $(tag)
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployAks
+        environment: 'producao'      # Environment com aprovação manual configurada no Azure DevOps
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: echo "kubectl apply -f k8s/ (ou helm upgrade) usando a imagem com tag $(tag)"
+                  displayName: Deploy no AKS (ilustrativo)
