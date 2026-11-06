@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="rodape">
       <div className="rodape-conteudo">
         <div>
-          <strong>⏱ Timeware Service Hub</strong>
+          <strong>⏱ Service Hub</strong>
           <p className="rodape-texto">Gestão de clientes, projetos e chamados.</p>
         </div>
         <nav className="rodape-links" aria-label="Links do rodapé">
@@ -16,7 +16,7 @@ export default function Footer() {
         </nav>
       </div>
       <div className="rodape-base">
-        © {new Date().getFullYear()} Timeware Service Hub · .NET 8 + React
+        © {new Date().getFullYear()} Service Hub · .NET 8 + React
       </div>
     </footer>
   );

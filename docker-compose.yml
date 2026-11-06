@@ -17,7 +17,7 @@ services:
     restart: unless-stopped   # volta sozinho quando o Docker/PC reinicia
     environment:
       ACCEPT_EULA: "Y"
-      MSSQL_SA_PASSWORD: "Timeware@2026!"     # apenas para desenvolvimento
+      MSSQL_SA_PASSWORD: "ServiceHub@2026!"     # apenas para desenvolvimento
       MSSQL_PID: "Developer"
     ports:
       - "1433:1433"
@@ -33,14 +33,14 @@ services:
   api:
     build:
       context: .
-      dockerfile: backend/TimewareServiceHub.Api/Dockerfile
+      dockerfile: backend/ServiceHub.Api/Dockerfile
     container_name: servicehub-api
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       # Variável de ambiente sobrescreve o appsettings.json. "__" (dois underscores) = ":" (nível do JSON).
       # Equivalente ao SPRING_DATASOURCE_URL sobrescrevendo spring.datasource.url.
-      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TimewareServiceHub;User Id=sa;Password=Timeware@2026!;TrustServerCertificate=True"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=ServiceHub;User Id=sa;Password=ServiceHub@2026!;TrustServerCertificate=True"
       Jwt__Chave: "chave-do-docker-compose-com-mais-de-32-caracteres!"
     ports:
       - "5000:8080"

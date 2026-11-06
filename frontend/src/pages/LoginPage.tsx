@@ -24,7 +24,7 @@ export default function LoginPage() {
   return (
     <div className="login-pagina">
       <form className="card login-card" onSubmit={entrar}>
-        <h1>Timeware Service Hub</h1>
+        <h1>Service Hub</h1>
         <p className="muted">Gestão de clientes, projetos e chamados</p>
 
         <label>

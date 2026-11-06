@@ -26,7 +26,7 @@ export default function SobrePage() {
 
       <section className="card sobre-intro">
         <p>
-          O <strong>Timeware Service Hub</strong> é um sistema de gestão de <strong>clientes, projetos e chamados</strong>,
+          O <strong>Service Hub</strong> é um sistema de gestão de <strong>clientes, projetos e chamados</strong>,
           inspirado no dia a dia de uma software house que atende empresas de varejo, saúde e finanças.
           Ele permite cadastrar clientes, acompanhar os projetos de cada um, abrir e priorizar chamados,
           atribuir responsáveis e manter um histórico de auditoria de cada alteração.

@@ -4,11 +4,11 @@
    A API já cria o banco sozinha ao subir (DatabaseInitializer.cs).
    ===================================================================== */
 
-IF DB_ID('TimewareServiceHub') IS NULL
-    CREATE DATABASE TimewareServiceHub;
+IF DB_ID('ServiceHub') IS NULL
+    CREATE DATABASE ServiceHub;
 GO
 
-USE TimewareServiceHub;
+USE ServiceHub;
 GO
 
 -- Depois rode, nesta ordem: 01-ddl.sql, e (após a API criar os usuários) 02-seed.sql

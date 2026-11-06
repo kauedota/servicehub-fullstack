@@ -1,4 +1,4 @@
-# Timeware Service Hub
+# Service Hub
 
 Sistema web de **gestão de clientes, projetos e chamados** para empresas de serviços de tecnologia:
 cadastro de clientes, acompanhamento de projetos, abertura e priorização de chamados, atribuição de
@@ -18,7 +18,7 @@ responsáveis, dashboard de indicadores e trilha de auditoria.
 ## Sumário
 
 - [Funcionalidades](#funcionalidades)
-- [Tecnologias](#tecnologias)
+- [Linguagens e tecnologias](#linguagens-e-tecnologias)
 - [Arquitetura](#arquitetura)
 - [Como executar](#como-executar)
 - [API](#api)
@@ -44,7 +44,17 @@ responsáveis, dashboard de indicadores e trilha de auditoria.
 | **Interface** | Responsiva (desktop, tablet e celular), menu hambúrguer, notificações toast |
 | **Operação** | Health check (`/health`), logging estruturado com Correlation ID, tratamento global de erros |
 
-## Tecnologias
+## Linguagens e tecnologias
+
+| Linguagem | Uso no projeto |
+|---|---|
+| **C#** (.NET 8) | API REST, regras de negócio, acesso a dados e testes |
+| **TypeScript** | Frontend em React |
+| **SQL (T-SQL)** | Schema, constraints, índices, stored procedure e consultas |
+| **CSS** | Interface responsiva (sem framework de UI) |
+| **HTML** | Entrada da aplicação web |
+| **YAML** | Docker Compose, GitHub Actions, Azure Pipelines e Kubernetes |
+| **Dockerfile / Nginx** | Imagens multi-stage e proxy reverso |
 
 **Backend:** C# · .NET 8 · ASP.NET Core Web API · Entity Framework Core · Dapper · ADO.NET · JWT Bearer · BCrypt · Swagger/OpenAPI · Health Checks
 
@@ -96,8 +106,8 @@ Cada tecnologia foi usada onde traz mais vantagem:
 Pré-requisito: [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ```bash
-git clone https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO.git
-cd NOME-DO-REPOSITORIO
+git clone https://github.com/kauedota/servicehub-fullstack.git
+cd servicehub-fullstack
 docker compose up --build
 ```
 
@@ -129,7 +139,7 @@ Pré-requisitos: [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) 
 docker compose up -d sqlserver
 
 # 2. API  →  http://localhost:5000/swagger
-cd backend/TimewareServiceHub.Api
+cd backend/ServiceHub.Api
 dotnet run
 
 # 3. Frontend  →  http://localhost:5173
@@ -142,7 +152,7 @@ O Vite encaminha as chamadas `/api` para a API na porta 5000.
 
 ### Configuração
 
-As configurações ficam em `backend/TimewareServiceHub.Api/appsettings.json` e podem ser sobrescritas por
+As configurações ficam em `backend/ServiceHub.Api/appsettings.json` e podem ser sobrescritas por
 variáveis de ambiente (ex.: `ConnectionStrings__DefaultConnection`, `Jwt__Chave`).
 
 | Chave | Descrição |
@@ -161,7 +171,7 @@ variáveis de ambiente (ex.: `ConnectionStrings__DefaultConnection`, `Jwt__Chave
 
 Todos os endpoints, exceto login e health check, exigem o header `Authorization: Bearer <token>`.
 A documentação interativa está no Swagger, e o arquivo
-[`TimewareServiceHub.Api.http`](backend/TimewareServiceHub.Api/TimewareServiceHub.Api.http) traz requisições prontas.
+[`ServiceHub.Api.http`](backend/ServiceHub.Api/ServiceHub.Api.http) traz requisições prontas.
 
 | Método | Rota | Descrição |
 |---|---|---|
@@ -261,8 +271,8 @@ docker run --rm -v "${PWD}/backend:/src" -w /src mcr.microsoft.com/dotnet/sdk:8.
 
 ```
 ├── backend/
-│   ├── TimewareServiceHub.sln
-│   ├── TimewareServiceHub.Api/
+│   ├── ServiceHub.sln
+│   ├── ServiceHub.Api/
 │   │   ├── Controllers/          Endpoints HTTP
 │   │   ├── Services/             Regras de negócio e emissão de JWT
 │   │   ├── Repositories/         Acesso a dados (EF Core, Dapper, ADO.NET)
@@ -275,7 +285,7 @@ docker run --rm -v "${PWD}/backend:/src" -w /src mcr.microsoft.com/dotnet/sdk:8.
 │   │   ├── Extensions/           Extension methods
 │   │   ├── Program.cs            Composição da aplicação e pipeline HTTP
 │   │   └── Dockerfile
-│   └── TimewareServiceHub.Tests/ Testes unitários
+│   └── ServiceHub.Tests/ Testes unitários
 ├── frontend/
 │   ├── src/
 │   │   ├── api/                  Cliente HTTP, serviços e tipos
@@ -296,9 +306,17 @@ docker run --rm -v "${PWD}/backend:/src" -w /src mcr.microsoft.com/dotnet/sdk:8.
 
 ## Screenshots
 
-| Dashboard | Chamados |
+| Login | Dashboard |
 |---|---|
-| ![Dashboard](assets/screenshots/dashboard.png) | ![Chamados](assets/screenshots/chamados.png) |
+| ![Login](assets/screenshots/login.png) | ![Dashboard](assets/screenshots/dashboard.png) |
+
+| Clientes | Projetos |
+|---|---|
+| ![Clientes](assets/screenshots/clientes.png) | ![Projetos](assets/screenshots/projetos.png) |
+
+| Chamados (filtros, prioridade, responsável e status) |
+|---|
+| ![Chamados](assets/screenshots/chamados.png) |
 
 | Sobre (status da API ao vivo) |
 |---|
@@ -326,6 +344,6 @@ docker run --rm -v "${PWD}/backend:/src" -w /src mcr.microsoft.com/dotnet/sdk:8.
 
 ## Autor
 
-**SEU NOME** · [LinkedIn](https://www.linkedin.com/in/SEU-PERFIL) · [GitHub](https://github.com/SEU-USUARIO)
+**Kaue Dota** · [LinkedIn](https://www.linkedin.com/in/kaue-dota/) · [GitHub](https://github.com/kauedota)
 
-> Projeto independente de portfólio, sem vínculo oficial com a Timeware. Os nomes de empresas e os dados de exemplo são fictícios.
+> Projeto de portfólio. Os nomes de empresas e os dados de exemplo são fictícios.

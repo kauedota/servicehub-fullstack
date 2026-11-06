@@ -13,7 +13,7 @@ metadata:
   name: servicehub-api-secrets
 type: Opaque
 stringData:
-  ConnectionStrings__DefaultConnection: "Server=sql-servicehub.database.windows.net;Database=TimewareServiceHub;User Id=app;Password=TROCAR;Encrypt=True"
+  ConnectionStrings__DefaultConnection: "Server=sql-servicehub.database.windows.net;Database=ServiceHub;User Id=app;Password=TROCAR;Encrypt=True"
   Jwt__Chave: "TROCAR-por-uma-chave-segura-com-mais-de-32-caracteres"
 ---
 apiVersion: apps/v1

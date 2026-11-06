@@ -21,11 +21,11 @@ stages:
           - task: UseDotNet@2
             inputs:
               version: '8.0.x'
-          - script: dotnet restore backend/TimewareServiceHub.sln
+          - script: dotnet restore backend/ServiceHub.sln
             displayName: Restore
-          - script: dotnet build backend/TimewareServiceHub.sln -c Release --no-restore
+          - script: dotnet build backend/ServiceHub.sln -c Release --no-restore
             displayName: Build
-          - script: dotnet test backend/TimewareServiceHub.sln -c Release --no-build
+          - script: dotnet test backend/ServiceHub.sln -c Release --no-build
             displayName: Testes
           - script: |
               cd frontend
@@ -42,7 +42,7 @@ stages:
               command: buildAndPush
               containerRegistry: $(acrConnection)
               repository: $(imageRepository)
-              dockerfile: backend/TimewareServiceHub.Api/Dockerfile
+              dockerfile: backend/ServiceHub.Api/Dockerfile
               buildContext: .
               tags: $(tag)
 
